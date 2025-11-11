@@ -1,0 +1,62 @@
+{
+  "name": "vscode-talon-helpers",
+  "displayName": "VSCode Talon Helpers",
+  "description": "Helper commands for Talon Voice integration with VSCode",
+  "version": "0.1.0",
+  "publisher": "talon-helpers",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jcaw/vscode_commands_for_talon"
+  },
+  "engines": {
+    "vscode": "^1.70.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "extensionDependencies": [
+    "pokey.command-server"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "jcaw.getFilePath",
+        "title": "Get Current File Path"
+      },
+      {
+        "command": "jcaw.getCursorPosition",
+        "title": "Get Cursor Position"
+      },
+      {
+        "command": "jcaw.getTextOnLine",
+        "title": "Get Text On Line"
+      },
+      {
+        "command": "jcaw.getSelectedText",
+        "title": "Get Selected Text"
+      },
+      {
+        "command": "jcaw.getTextBetweenOffsets",
+        "title": "Get Text Between Offsets"
+      },
+      {
+        "command": "jcaw.getDocumentBounds",
+        "title": "Get Document Bounds"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "@types/vscode": "^1.70.0",
+    "typescript": "^5.0.0"
+  }
+}
