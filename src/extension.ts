@@ -203,6 +203,209 @@ export function activate(context: vscode.ExtensionContext) {
         }
     );
 
+    const getVisibleRangeCommand = vscode.commands.registerCommand(
+        'jcaw.getVisibleRange',
+        () => {
+            const editor = vscode.window.activeTextEditor;
+            if (!editor) {
+                throw new Error('No active editor');
+            }
+
+            const document = editor.document;
+            const visibleRanges = editor.visibleRanges;
+
+            if (visibleRanges.length === 0) {
+                throw new Error('No visible ranges');
+            }
+
+            // Return the first visible range (primary viewport)
+            const range = visibleRanges[0];
+            return {
+                start: {
+                    line: range.start.line,
+                    column: range.start.character,
+                    offset: document.offsetAt(range.start)
+                },
+                end: {
+                    line: range.end.line,
+                    column: range.end.character,
+                    offset: document.offsetAt(range.end)
+                }
+            };
+        }
+    );
+
+    const getCurrentWordCommand = vscode.commands.registerCommand(
+        'jcaw.getCurrentWord',
+        (position?: { line: number, column: number }) => {
+            const editor = vscode.window.activeTextEditor;
+            if (!editor) {
+                throw new Error('No active editor');
+            }
+
+            const document = editor.document;
+            const pos = position
+                ? new vscode.Position(position.line, position.column)
+                : editor.selection.active;
+
+            const wordRange = document.getWordRangeAtPosition(pos);
+
+            if (!wordRange) {
+                return {
+                    text: '',
+                    start: {
+                        line: pos.line,
+                        column: pos.character,
+                        offset: document.offsetAt(pos)
+                    },
+                    end: {
+                        line: pos.line,
+                        column: pos.character,
+                        offset: document.offsetAt(pos)
+                    }
+                };
+            }
+
+            return {
+                text: document.getText(wordRange),
+                start: {
+                    line: wordRange.start.line,
+                    column: wordRange.start.character,
+                    offset: document.offsetAt(wordRange.start)
+                },
+                end: {
+                    line: wordRange.end.line,
+                    column: wordRange.end.character,
+                    offset: document.offsetAt(wordRange.end)
+                }
+            };
+        }
+    );
+
+    const getSymbolAtPositionCommand = vscode.commands.registerCommand(
+        'jcaw.getSymbolAtPosition',
+        async (position?: { line: number, column: number }) => {
+            const editor = vscode.window.activeTextEditor;
+            if (!editor) {
+                throw new Error('No active editor');
+            }
+
+            const document = editor.document;
+            const pos = position
+                ? new vscode.Position(position.line, position.column)
+                : editor.selection.active;
+
+            // Get document symbols at the position
+            const symbols = await vscode.commands.executeCommand<vscode.DocumentSymbol[]>(
+                'vscode.executeDocumentSymbolProvider',
+                document.uri
+            );
+
+            if (!symbols || symbols.length === 0) {
+                return null;
+            }
+
+            // Find the most specific symbol containing the position
+            function findSymbolAtPosition(symbols: vscode.DocumentSymbol[], pos: vscode.Position): vscode.DocumentSymbol | null {
+                for (const symbol of symbols) {
+                    if (symbol.range.contains(pos)) {
+                        // Check children first for more specific match
+                        if (symbol.children && symbol.children.length > 0) {
+                            const childMatch = findSymbolAtPosition(symbol.children, pos);
+                            if (childMatch) {
+                                return childMatch;
+                            }
+                        }
+                        return symbol;
+                    }
+                }
+                return null;
+            }
+
+            const symbol = findSymbolAtPosition(symbols, pos);
+
+            if (!symbol) {
+                return null;
+            }
+
+            return {
+                name: symbol.name,
+                kind: vscode.SymbolKind[symbol.kind],
+                range: {
+                    start: {
+                        line: symbol.range.start.line,
+                        column: symbol.range.start.character,
+                        offset: document.offsetAt(symbol.range.start)
+                    },
+                    end: {
+                        line: symbol.range.end.line,
+                        column: symbol.range.end.character,
+                        offset: document.offsetAt(symbol.range.end)
+                    }
+                },
+                selectionRange: {
+                    start: {
+                        line: symbol.selectionRange.start.line,
+                        column: symbol.selectionRange.start.character,
+                        offset: document.offsetAt(symbol.selectionRange.start)
+                    },
+                    end: {
+                        line: symbol.selectionRange.end.line,
+                        column: symbol.selectionRange.end.character,
+                        offset: document.offsetAt(symbol.selectionRange.end)
+                    }
+                }
+            };
+        }
+    );
+
+    const getIndentationLevelCommand = vscode.commands.registerCommand(
+        'jcaw.getIndentationLevel',
+        (lineNumber?: number) => {
+            const editor = vscode.window.activeTextEditor;
+            if (!editor) {
+                throw new Error('No active editor');
+            }
+
+            const document = editor.document;
+            const line = lineNumber !== undefined
+                ? lineNumber
+                : editor.selection.active.line;
+
+            if (line < 0 || line >= document.lineCount) {
+                throw new Error(`Line ${line} out of bounds. Document has ${document.lineCount} lines`);
+            }
+
+            const lineText = document.lineAt(line).text;
+            const tabSize = editor.options.tabSize as number || 4;
+            const insertSpaces = editor.options.insertSpaces as boolean;
+
+            // Count leading whitespace
+            let spaces = 0;
+            let tabs = 0;
+            for (let i = 0; i < lineText.length; i++) {
+                if (lineText[i] === ' ') {
+                    spaces++;
+                } else if (lineText[i] === '\t') {
+                    tabs++;
+                } else {
+                    break;
+                }
+            }
+
+            // Calculate effective indentation level
+            const totalSpaces = spaces + (tabs * tabSize);
+            const level = Math.floor(totalSpaces / tabSize);
+
+            return {
+                level: level,
+                spaces: totalSpaces,
+                tabs: tabs,
+                usesTabs: !insertSpaces
+            };
+        }
+    );
+
     context.subscriptions.push(
         getFilePathCommand,
         getCursorPositionCommand,
@@ -210,7 +413,11 @@ export function activate(context: vscode.ExtensionContext) {
         getSelectedTextCommand,
         getTextBetweenOffsetsCommand,
         getDocumentBoundsCommand,
-        getDictationContextCommand
+        getDictationContextCommand,
+        getVisibleRangeCommand,
+        getCurrentWordCommand,
+        getSymbolAtPositionCommand,
+        getIndentationLevelCommand
     );
 }
 

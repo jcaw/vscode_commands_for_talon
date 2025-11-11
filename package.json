@@ -49,6 +49,22 @@
       {
         "command": "jcaw.getDictationContext",
         "title": "Get Dictation Context"
+      },
+      {
+        "command": "jcaw.getVisibleRange",
+        "title": "Get Visible Range"
+      },
+      {
+        "command": "jcaw.getCurrentWord",
+        "title": "Get Current Word"
+      },
+      {
+        "command": "jcaw.getSymbolAtPosition",
+        "title": "Get Symbol At Position"
+      },
+      {
+        "command": "jcaw.getIndentationLevel",
+        "title": "Get Indentation Level"
       }
     ]
   },
