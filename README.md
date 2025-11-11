@@ -120,6 +120,21 @@ Returns the start and end positions of the entire document.
 }
 ```
 
+### `jcaw.getDictationContext`
+
+Returns text before and after the cursor/selection for context-sensitive dictation. Used by voice commands that need surrounding context to make intelligent decisions.
+
+**Arguments:**
+- `maxChars` (optional): Maximum number of characters to retrieve before and after the cursor. Defaults to 500.
+
+**Returns:**
+```typescript
+{
+  before: string,  // Text before the selection/cursor
+  after: string    // Text after the selection/cursor
+}
+```
+
 ## Installation
 
 To use this extension, you'll need to install Cursorless' [command-server](https://marketplace.visualstudio.com/items?itemName=pokey.command-server) in VSCode and use the [talon-command-client](https://github.com/cursorless-dev/talon-command-client) to communicate with it from Talon. You don't need Cursorless itself - just the commend server.
@@ -177,6 +192,8 @@ line_text = actions.user.run_rpc_command_get("jcaw.getTextOnLine", 10)
 selected = actions.user.run_rpc_command_get("jcaw.getSelectedText")
 text_range = actions.user.run_rpc_command_get("jcaw.getTextBetweenOffsets", 0, 100)
 bounds = actions.user.run_rpc_command_get("jcaw.getDocumentBounds")
+context = actions.user.run_rpc_command_get("jcaw.getDictationContext")  # Default 500 chars
+context_large = actions.user.run_rpc_command_get("jcaw.getDictationContext", 1000)  # Custom size
 ```
 
 **Note:** You may want to create wrapper actions for cleaner error handling and to provide better error messages when VSCode isn't active or the command-server isn't running. The `community` repo already has the VSCode RPC implemented - so you could just wire in these commands.

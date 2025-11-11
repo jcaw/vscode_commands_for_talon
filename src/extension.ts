@@ -166,13 +166,51 @@ export function activate(context: vscode.ExtensionContext) {
         }
     );
 
+    const getDictationContextCommand = vscode.commands.registerCommand(
+        'jcaw.getDictationContext',
+        (maxChars: number = 500) => {
+            const editor = vscode.window.activeTextEditor;
+            if (!editor) {
+                throw new Error('No active editor');
+            }
+
+            const document = editor.document;
+            const selection = editor.selection;
+
+            // Use the start of the selection as the reference point
+            const referencePos = selection.start;
+            const referenceOffset = document.offsetAt(referencePos);
+
+            // Get text before the selection
+            const beforeStartOffset = Math.max(0, referenceOffset - maxChars);
+            const beforeStartPos = document.positionAt(beforeStartOffset);
+            const beforeRange = new vscode.Range(beforeStartPos, referencePos);
+            const before = document.getText(beforeRange);
+
+            // Get text after the selection
+            const selectionEnd = selection.end;
+            const selectionEndOffset = document.offsetAt(selectionEnd);
+            const documentText = document.getText();
+            const afterEndOffset = Math.min(documentText.length, selectionEndOffset + maxChars);
+            const afterEndPos = document.positionAt(afterEndOffset);
+            const afterRange = new vscode.Range(selectionEnd, afterEndPos);
+            const after = document.getText(afterRange);
+
+            return {
+                before: before,
+                after: after
+            };
+        }
+    );
+
     context.subscriptions.push(
         getFilePathCommand,
         getCursorPositionCommand,
         getTextOnLineCommand,
         getSelectedTextCommand,
         getTextBetweenOffsetsCommand,
-        getDocumentBoundsCommand
+        getDocumentBoundsCommand,
+        getDictationContextCommand
     );
 }
 

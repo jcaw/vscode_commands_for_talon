@@ -45,6 +45,10 @@
       {
         "command": "jcaw.getDocumentBounds",
         "title": "Get Document Bounds"
+      },
+      {
+        "command": "jcaw.getDictationContext",
+        "title": "Get Dictation Context"
       }
     ]
   },
