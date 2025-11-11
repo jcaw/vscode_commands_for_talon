@@ -12,9 +12,9 @@ This extension provides the following commands for use with Talon Voice via the 
 
 ### `jcaw.getFilePath`
 
-Returns the full path of the currently active file. Returns null if no file is active.
+Returns the full path of the currently active file.
 
-**Returns:** `string | null`
+**Returns:** `string`
 
 ### `jcaw.getCursorPosition`
 
@@ -26,7 +26,7 @@ Returns information about the current cursor position.
   line: number,              // 0-based line number
   column: number,            // 0-based column position in line
   offset: number            // Absolute byte offset in document
-} | null
+}
 ```
 
 ### `jcaw.getTextOnLine`
@@ -50,7 +50,7 @@ Returns the text on the specified line (or current line if no argument provided)
     column: number,
     offset: number
   }
-} | null
+}
 ```
 
 ### `jcaw.getSelectedText`
@@ -72,12 +72,12 @@ Returns the currently selected text along with selection information. Note that 
     offset: number
   },
   isEmpty: boolean
-} | null
+}
 ```
 
 ### `jcaw.getTextBetweenOffsets`
 
-Returns the text between two byte offsets in the document. Throws an error if offsets are out of bounds.
+Returns the text between two byte offsets in the document.
 
 **Arguments:**
 - `startOffset` (required): Starting byte offset (0-based, inclusive)
@@ -97,12 +97,8 @@ Returns the text between two byte offsets in the document. Throws an error if of
     column: number,
     offset: number
   }
-} | null
+}
 ```
-
-**Errors:**
-- Throws if either offset is negative or exceeds document length
-- Throws if startOffset > endOffset
 
 ### `jcaw.getDocumentBounds`
 
@@ -121,7 +117,7 @@ Returns the start and end positions of the entire document.
     column: number,
     offset: number
   }
-} | null
+}
 ```
 
 ## Installation

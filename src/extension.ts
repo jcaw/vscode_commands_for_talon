@@ -8,7 +8,7 @@ export function activate(context: vscode.ExtensionContext) {
         () => {
             const editor = vscode.window.activeTextEditor;
             if (!editor) {
-                return null;
+                throw new Error('No active editor');
             }
             return editor.document.fileName;
         }
@@ -19,7 +19,7 @@ export function activate(context: vscode.ExtensionContext) {
         () => {
             const editor = vscode.window.activeTextEditor;
             if (!editor) {
-                return null;
+                throw new Error('No active editor');
             }
 
             const position = editor.selection.active;
@@ -38,19 +38,17 @@ export function activate(context: vscode.ExtensionContext) {
         (lineNumber?: number) => {
             const editor = vscode.window.activeTextEditor;
             if (!editor) {
-                return null;
+                throw new Error('No active editor');
             }
 
             const document = editor.document;
 
-            // If no line number provided, use current cursor line
             const line = lineNumber !== undefined
                 ? lineNumber
                 : editor.selection.active.line;
 
-            // Check if line is valid
             if (line < 0 || line >= document.lineCount) {
-                return null;
+                throw new Error(`Line ${line} out of bounds. Document has ${document.lineCount} lines`);
             }
 
             const lineText = document.lineAt(line);
@@ -75,7 +73,7 @@ export function activate(context: vscode.ExtensionContext) {
         () => {
             const editor = vscode.window.activeTextEditor;
             if (!editor) {
-                return null;
+                throw new Error('No active editor');
             }
 
             const selection = editor.selection;
@@ -104,13 +102,12 @@ export function activate(context: vscode.ExtensionContext) {
         (startOffset: number, endOffset: number) => {
             const editor = vscode.window.activeTextEditor;
             if (!editor) {
-                return null;
+                throw new Error('No active editor');
             }
 
             const document = editor.document;
             const documentLength = document.getText().length;
 
-            // Validate offsets
             if (startOffset < 0 || startOffset > documentLength ||
                 endOffset < 0 || endOffset > documentLength) {
                 throw new Error(`Offset out of bounds. Document length: ${documentLength}, requested range: ${startOffset}-${endOffset}`);
@@ -146,7 +143,7 @@ export function activate(context: vscode.ExtensionContext) {
         () => {
             const editor = vscode.window.activeTextEditor;
             if (!editor) {
-                return null;
+                throw new Error('No active editor');
             }
 
             const document = editor.document;
