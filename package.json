@@ -65,6 +65,22 @@
       {
         "command": "jcaw.getIndentationLevel",
         "title": "Get Indentation Level"
+      },
+      {
+        "command": "jcaw.getLineCount",
+        "title": "Get Line Count"
+      },
+      {
+        "command": "jcaw.getLanguageId",
+        "title": "Get Language ID"
+      },
+      {
+        "command": "jcaw.getVisibleLineNumbers",
+        "title": "Get Visible Line Numbers"
+      },
+      {
+        "command": "jcaw.getProjectRoot",
+        "title": "Get Project Root"
       }
     ]
   },

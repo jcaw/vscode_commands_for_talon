@@ -223,6 +223,38 @@ Returns indentation information for a line.
 }
 ```
 
+### `jcaw.getLineCount`
+
+Returns the total number of lines in the document.
+
+**Returns:** `number`
+
+### `jcaw.getLanguageId`
+
+Returns the language mode/ID of the current file (e.g., "python", "typescript", "javascript").
+
+**Returns:** `string`
+
+### `jcaw.getVisibleLineNumbers`
+
+Returns the range of visible line numbers in the editor viewport.
+
+**Returns:**
+```typescript
+{
+  first: number,  // First visible line (0-based)
+  last: number    // Last visible line (0-based)
+}
+```
+
+### `jcaw.getProjectRoot`
+
+Returns the workspace root path for the current file's project.
+
+**Returns:** `string | null`
+
+**Note:** Returns `null` if the file is not part of a workspace.
+
 ## Installation
 
 To use this extension, you'll need to install Cursorless' [command-server](https://marketplace.visualstudio.com/items?itemName=pokey.command-server) in VSCode and use the [talon-command-client](https://github.com/cursorless-dev/talon-command-client) to communicate with it from Talon. You don't need Cursorless itself - just the commend server.
@@ -283,13 +315,16 @@ bounds = actions.user.run_rpc_command_get("jcaw.getDocumentBounds")
 context = actions.user.run_rpc_command_get("jcaw.getDictationContext")  # Default 500 chars
 context_large = actions.user.run_rpc_command_get("jcaw.getDictationContext", 1000)  # Custom size
 
-# New high-priority commands
 visible = actions.user.run_rpc_command_get("jcaw.getVisibleRange")
 word = actions.user.run_rpc_command_get("jcaw.getCurrentWord")
 word_at_pos = actions.user.run_rpc_command_get("jcaw.getCurrentWord", {"line": 10, "column": 5})
 symbol = actions.user.run_rpc_command_get("jcaw.getSymbolAtPosition")  # Returns None if no symbol
 indent = actions.user.run_rpc_command_get("jcaw.getIndentationLevel")
 indent_line = actions.user.run_rpc_command_get("jcaw.getIndentationLevel", 15)
+line_count = actions.user.run_rpc_command_get("jcaw.getLineCount")
+language = actions.user.run_rpc_command_get("jcaw.getLanguageId")
+visible_lines = actions.user.run_rpc_command_get("jcaw.getVisibleLineNumbers")
+project_root = actions.user.run_rpc_command_get("jcaw.getProjectRoot")  # Returns None if no workspace
 ```
 
 **Note:** You may want to create wrapper actions for cleaner error handling and to provide better error messages when VSCode isn't active or the command-server isn't running. The `community` repo already has the VSCode RPC implemented - so you could just wire in these commands.

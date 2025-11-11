@@ -406,6 +406,71 @@ export function activate(context: vscode.ExtensionContext) {
         }
     );
 
+    const getLineCountCommand = vscode.commands.registerCommand(
+        'jcaw.getLineCount',
+        () => {
+            const editor = vscode.window.activeTextEditor;
+            if (!editor) {
+                throw new Error('No active editor');
+            }
+
+            return editor.document.lineCount;
+        }
+    );
+
+    const getLanguageIdCommand = vscode.commands.registerCommand(
+        'jcaw.getLanguageId',
+        () => {
+            const editor = vscode.window.activeTextEditor;
+            if (!editor) {
+                throw new Error('No active editor');
+            }
+
+            return editor.document.languageId;
+        }
+    );
+
+    const getVisibleLineNumbersCommand = vscode.commands.registerCommand(
+        'jcaw.getVisibleLineNumbers',
+        () => {
+            const editor = vscode.window.activeTextEditor;
+            if (!editor) {
+                throw new Error('No active editor');
+            }
+
+            const visibleRanges = editor.visibleRanges;
+
+            if (visibleRanges.length === 0) {
+                throw new Error('No visible ranges');
+            }
+
+            // Return the first and last visible line numbers
+            const range = visibleRanges[0];
+            return {
+                first: range.start.line,
+                last: range.end.line
+            };
+        }
+    );
+
+    const getProjectRootCommand = vscode.commands.registerCommand(
+        'jcaw.getProjectRoot',
+        () => {
+            const editor = vscode.window.activeTextEditor;
+            if (!editor) {
+                throw new Error('No active editor');
+            }
+
+            const workspaceFolder = vscode.workspace.getWorkspaceFolder(editor.document.uri);
+
+            if (!workspaceFolder) {
+                return null;
+            }
+
+            return workspaceFolder.uri.fsPath;
+        }
+    );
+
     context.subscriptions.push(
         getFilePathCommand,
         getCursorPositionCommand,
@@ -417,7 +482,11 @@ export function activate(context: vscode.ExtensionContext) {
         getVisibleRangeCommand,
         getCurrentWordCommand,
         getSymbolAtPositionCommand,
-        getIndentationLevelCommand
+        getIndentationLevelCommand,
+        getLineCountCommand,
+        getLanguageIdCommand,
+        getVisibleLineNumbersCommand,
+        getProjectRootCommand
     );
 }
 
