@@ -81,6 +81,30 @@
       {
         "command": "jcaw.getProjectRoot",
         "title": "Get Project Root"
+      },
+      {
+        "command": "jcaw.claudeCodeFocusPanel",
+        "title": "Focus Claude Code (Panel Strategy)"
+      },
+      {
+        "command": "jcaw.claudeCodeFocusWithClick",
+        "title": "Focus Claude Code (Click Strategy)"
+      },
+      {
+        "command": "jcaw.claudeCodeFocusAuxiliary",
+        "title": "Focus Claude Code (Auxiliary Bar)"
+      },
+      {
+        "command": "jcaw.claudeCodeFocusSidebar",
+        "title": "Focus Claude Code (Sidebar)"
+      },
+      {
+        "command": "jcaw.getClaudeCodeApi",
+        "title": "Get Claude Code API"
+      },
+      {
+        "command": "jcaw.getAllCommandsHierarchical",
+        "title": "Get All Commands (Hierarchical)"
       }
     ]
   },
@@ -88,7 +112,9 @@
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "pretest": "npm run compile"
+    "pretest": "npm run compile",
+    "package": "vsce package",
+    "reinstall": "npm run compile && code --uninstall-extension talon-helpers.vscode-talon-helpers && npm run package && code --install-extension vscode-talon-helpers-0.1.0.vsix"
   },
   "devDependencies": {
     "@types/node": "^18.0.0",

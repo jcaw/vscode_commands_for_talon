@@ -471,6 +471,117 @@ export function activate(context: vscode.ExtensionContext) {
         }
     );
 
+    // Claude Code focus workarounds
+    const claudeCodeFocusPanelCommand = vscode.commands.registerCommand(
+        'jcaw.claudeCodeFocusPanel',
+        async () => {
+            // Strategy 1: Open sidebar and focus the panel view
+            await vscode.commands.executeCommand('claude-vscode.sidebar.open');
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            // Try to focus the panel/webview
+            await vscode.commands.executeCommand('workbench.action.focusActiveEditorGroup');
+        }
+    );
+
+    const claudeCodeFocusWithClickCommand = vscode.commands.registerCommand(
+        'jcaw.claudeCodeFocusWithClick',
+        async () => {
+            // Strategy 2: Open and send Tab keys to navigate to input
+            await vscode.commands.executeCommand('claude-vscode.sidebar.open');
+            await new Promise(resolve => setTimeout(resolve, 200));
+
+            // Send Tab to navigate to the input (may need adjustment)
+            await vscode.commands.executeCommand('workbench.action.focusPreviousGroup');
+            await vscode.commands.executeCommand('workbench.action.focusNextGroup');
+        }
+    );
+
+    const claudeCodeFocusAuxiliaryCommand = vscode.commands.registerCommand(
+        'jcaw.claudeCodeFocusAuxiliary',
+        async () => {
+            // Strategy 3: Try focusing the auxiliary bar (where sidebar lives)
+            await vscode.commands.executeCommand('claude-vscode.sidebar.open');
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            // Focus the sidebar/auxiliary bar
+            await vscode.commands.executeCommand('workbench.action.focusAuxiliaryBar');
+        }
+    );
+
+    const claudeCodeFocusSidebarCommand = vscode.commands.registerCommand(
+        'jcaw.claudeCodeFocusSidebar',
+        async () => {
+            // Strategy 4: Focus the sidebar directly
+            await vscode.commands.executeCommand('claude-vscode.sidebar.open');
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            // Try sidebar focus commands
+            await vscode.commands.executeCommand('workbench.action.focusSideBar');
+        }
+    );
+
+    const getClaudeCodeApiCommand = vscode.commands.registerCommand(
+        'jcaw.getClaudeCodeApi',
+        async () => {
+            // Get all commands that start with 'claude-vscode.'
+            const allCommands = await vscode.commands.getCommands(true);
+            const claudeCommands = allCommands.filter(cmd => cmd.startsWith('claude-vscode.'));
+
+            const result = JSON.stringify(claudeCommands, null, 2);
+            await vscode.env.clipboard.writeText(result);
+            vscode.window.showInformationMessage(`Copied ${claudeCommands.length} Claude Code commands to clipboard`);
+
+            return claudeCommands;
+        }
+    );
+
+    const getAllCommandsHierarchicalCommand = vscode.commands.registerCommand(
+        'jcaw.getAllCommandsHierarchical',
+        async () => {
+            // Get all commands
+            const allCommands = await vscode.commands.getCommands(true);
+
+            // Organize commands hierarchically
+            const hierarchy: any = {};
+
+            for (const command of allCommands) {
+                const parts = command.split('.');
+                let current = hierarchy;
+
+                for (let i = 0; i < parts.length - 1; i++) {
+                    const part = parts[i];
+                    if (!current[part]) {
+                        current[part] = {};
+                    } else if (typeof current[part] === 'string') {
+                        // If it's a command string, convert to object with __commands array
+                        const cmdValue = current[part];
+                        current[part] = {
+                            __commands: [cmdValue]
+                        };
+                    }
+                    current = current[part];
+                }
+
+                // Store the final part as either a string or in an array if multiple commands share the prefix
+                const lastPart = parts[parts.length - 1];
+                if (!current[lastPart]) {
+                    current[lastPart] = command;
+                } else if (typeof current[lastPart] === 'string') {
+                    current[lastPart] = [current[lastPart], command];
+                } else if (Array.isArray(current[lastPart])) {
+                    current[lastPart].push(command);
+                }
+            }
+
+            const result = JSON.stringify(hierarchy, null, 2);
+            await vscode.env.clipboard.writeText(result);
+            vscode.window.showInformationMessage(`Copied ${allCommands.length} commands (hierarchical) to clipboard`);
+
+            return hierarchy;
+        }
+    );
+
     context.subscriptions.push(
         getFilePathCommand,
         getCursorPositionCommand,
@@ -486,7 +597,13 @@ export function activate(context: vscode.ExtensionContext) {
         getLineCountCommand,
         getLanguageIdCommand,
         getVisibleLineNumbersCommand,
-        getProjectRootCommand
+        getProjectRootCommand,
+        claudeCodeFocusPanelCommand,
+        claudeCodeFocusWithClickCommand,
+        claudeCodeFocusAuxiliaryCommand,
+        claudeCodeFocusSidebarCommand,
+        getClaudeCodeApiCommand,
+        getAllCommandsHierarchicalCommand
     );
 }
 
