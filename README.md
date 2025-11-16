@@ -79,25 +79,25 @@ These commands are called from Talon using the `run_rpc_command_get` action prov
 
 ```python
 # Example in Talon
-filepath = actions.user.run_rpc_command_get("jcaw.getFilePath")
-cursor_pos = actions.user.run_rpc_command_get("jcaw.getCursorPosition")
-line_text = actions.user.run_rpc_command_get("jcaw.getTextOnLine", 10)
-selected = actions.user.run_rpc_command_get("jcaw.getSelectedText")
-text_range = actions.user.run_rpc_command_get("jcaw.getTextBetweenOffsets", 0, 100)
-bounds = actions.user.run_rpc_command_get("jcaw.getDocumentBounds")
-context = actions.user.run_rpc_command_get("jcaw.getDictationContext")  # Default 500 chars
-context_large = actions.user.run_rpc_command_get("jcaw.getDictationContext", 1000)  # Custom size
+filepath       = actions.user.run_rpc_command_get("jcaw.getFilePath")
+cursor_pos     = actions.user.run_rpc_command_get("jcaw.getCursorPosition")
+line_text      = actions.user.run_rpc_command_get("jcaw.getTextOnLine", 10)
+selected       = actions.user.run_rpc_command_get("jcaw.getSelectedText")
+text_range     = actions.user.run_rpc_command_get("jcaw.getTextBetweenOffsets", 0, 100)
+bounds         = actions.user.run_rpc_command_get("jcaw.getDocumentBounds")
+context        = actions.user.run_rpc_command_get("jcaw.getDictationContext")  # Default 500 chars
+context_large  = actions.user.run_rpc_command_get("jcaw.getDictationContext", 1000)  # Custom size
 
-visible = actions.user.run_rpc_command_get("jcaw.getVisibleRange")
-word = actions.user.run_rpc_command_get("jcaw.getCurrentWord")
-word_at_pos = actions.user.run_rpc_command_get("jcaw.getCurrentWord", {"line": 10, "column": 5})
-symbol = actions.user.run_rpc_command_get("jcaw.getSymbolAtPosition")  # Returns None if no symbol
-indent = actions.user.run_rpc_command_get("jcaw.getIndentationLevel")
-indent_line = actions.user.run_rpc_command_get("jcaw.getIndentationLevel", 15)
-line_count = actions.user.run_rpc_command_get("jcaw.getLineCount")
-language = actions.user.run_rpc_command_get("jcaw.getLanguageId")
-visible_lines = actions.user.run_rpc_command_get("jcaw.getVisibleLineNumbers")
-project_root = actions.user.run_rpc_command_get("jcaw.getProjectRoot")  # Returns None if no workspace
+visible        = actions.user.run_rpc_command_get("jcaw.getVisibleRange")
+word           = actions.user.run_rpc_command_get("jcaw.getCurrentWord")
+word_at_pos    = actions.user.run_rpc_command_get("jcaw.getCurrentWord", {"line": 10, "column": 5})
+symbol         = actions.user.run_rpc_command_get("jcaw.getSymbolAtPosition")  # Returns None if no symbol
+indent         = actions.user.run_rpc_command_get("jcaw.getIndentationLevel")
+indent_line    = actions.user.run_rpc_command_get("jcaw.getIndentationLevel", 15)
+line_count     = actions.user.run_rpc_command_get("jcaw.getLineCount")
+language       = actions.user.run_rpc_command_get("jcaw.getLanguageId")
+visible_lines  = actions.user.run_rpc_command_get("jcaw.getVisibleLineNumbers")
+project_root   = actions.user.run_rpc_command_get("jcaw.getProjectRoot")  # Returns None if no workspace
 ```
 
 **Note:** You may want to create wrapper actions for cleaner error handling and to provide better error messages when VSCode isn't active or the command-server isn't running. The `community` repo already has the VSCode RPC implemented - so you could just wire in these commands.
